@@ -1,3 +1,4 @@
+import store from '@/store'
 import axios from 'axios'
 import { Toast } from 'vant'
 
@@ -9,6 +10,10 @@ const instance = axios.create({
 instance.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
   config.headers.platform = 'H5'
+  const token = store.getters.token
+  if (token) {
+    config.headers['Access-Token'] = token
+  }
   Toast.loading({
     message: '请求中...',
     forbidClick: true,
