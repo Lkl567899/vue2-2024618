@@ -22,54 +22,89 @@
       </div>
     </div>
     <div class="service">
-        <div class="left-words">
-          <span><van-icon name="passed" />七天无理由退货</span>
-          <span><van-icon name="passed" />48小时发货</span>
-        </div>
-        <div class="right-icon">
-          <van-icon name="arrow" />
-        </div>
+      <div class="left-words">
+        <span><van-icon name="passed" />七天无理由退货</span>
+        <span><van-icon name="passed" />48小时发货</span>
+      </div>
+      <div class="right-icon">
+        <van-icon name="arrow" />
+      </div>
     </div>
     <div class="comment">
-     <div class="comment-title">
-      <div class="left">商品评价 (5条)</div>
-      <div class="right">查看更多 <van-icon name="arrow" /> </div>
-     </div>
-     <div class="comment-list">
-      <div class="comment-item">
-        <div class="top">
-          <img src="../../assets/leina.avif" alt="">
-          <div class="name">神雕大侠</div>
-          <van-rate :size="20" :value="5" color="#ffd21e" void-icon="star" void-color="#eee"/>
-        </div>
-        <div class="content">
+      <div class="comment-title">
+        <div class="left">商品评价 (5条)</div>
+        <div class="right">查看更多 <van-icon name="arrow" /> </div>
+      </div>
+      <div class="comment-list">
+        <div class="comment-item">
+          <div class="top">
+            <img src="../../assets/leina.avif" alt="">
+            <div class="name">神雕大侠</div>
+            <van-rate :size="20" :value="5" color="#ffd21e" void-icon="star" void-color="#eee" />
+          </div>
+          <div class="content">
             质量很不错 挺喜欢的
           </div>
           <div class="time">
             2023-03-21 15:01:35
           </div>
+        </div>
       </div>
-     </div>
     </div>
     <div class="tips">商品描述</div>
     <div class="desc" v-html="detail"></div>
     <div class="footer">
-      <div class="icon-home">
+      <div class="icon-home" @click="$router.push('/home')">
         <van-icon name="wap-home-o" />
         <span>首页</span>
       </div>
-      <div class="icon-cart">
+      <div class="icon-cart" @click="$router.push('/cart')">
+        <span v-if="cartTotal > 0" class="num">{{ cartTotal }}</span>
         <van-icon name="shopping-cart-o" />
         <span>购物车</span>
       </div>
-      <div class="btn-add">加入购物车</div>
-      <div class="btn-buy">立刻购买</div>
+      <div class="btn-add" @click="goShopping('cart')">加入购物车</div>
+      <div class="btn-buy" @click="goShopping('buy')">立刻购买</div>
     </div>
+    <!-- 控制面板 -->
+    <van-action-sheet v-model="show" :title="mode === 'cart' ? '加入购物车' : '立刻购买'">
+      <div class="product">
+        <div class="product-title">
+          <div class="left">
+            <img :src="data.goods_image" alt="" />
+          </div>
+          <div class="right">
+            <div class="price">
+              <span>¥</span>
+              <span class="nowprice">{{ data.goods_price_min }}</span>
+            </div>
+            <div class="count">
+              <span>库存</span>
+              <span>{{ data.stock_total }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="num-box">
+          <span>数量</span>
+          <countBox v-model="count"></countBox>
+
+        </div>
+        <div class="showbtn" v-if="true">
+          <div class="btn" v-if="this.mode === 'cart'" @click="addCart">
+            加入购物车
+          </div>
+          <div class="btn now" @click="buy" v-else>立刻购买</div>
+        </div>
+        <div class="btn-none" v-else>该商品已抢完</div>
+      </div>
+    </van-action-sheet>
   </div>
 </template>
 
 <script>
 import { GetGoodsDetailAPI } from '@/api/prodetail'
+import { PostCartAddAPI, GetCartTotalAPI } from '@/api/cart'
+import countBox from '@/components/countBox.vue'
 export default {
   name: 'prodetailIndex',
   computed: {
@@ -77,15 +112,22 @@ export default {
       return this.$route.params.id
     }
   },
+  components: { countBox },
   data () {
     return {
       images: [],
       current: 0,
-      detail: []
+      detail: [],
+      data: [],
+      mode: '',
+      count: 1,
+      show: false,
+      cartTotal: 0
     }
   },
   created () {
     this.GetGoodsDetailData()
+    this.GetCartTotalData()
   },
   methods: {
     async GetGoodsDetailData () {
@@ -93,9 +135,26 @@ export default {
       console.log(res.data.detail)
       this.images = res.data.detail.goods_images
       this.detail = res.data.detail.content
+      this.data = res.data.detail
     },
     onChange (index) {
       this.current = index
+    },
+    goShopping (key) {
+      console.log(key)
+      this.mode = key
+      this.show = true
+    },
+    async addCart () {
+      const res = await PostCartAddAPI(this.goodsId, this.count, this.data.skuList[0].goods_sku_id)
+      this.cartTotal = res.data.cartTotal
+      this.show = false
+    },
+    buy () {
+    },
+    async GetCartTotalData () {
+      const res = await GetCartTotalAPI()
+      this.cartTotal = res.data.cartTotal
     }
   }
 }
@@ -104,7 +163,8 @@ export default {
 <style lang="less" scoped>
 .prodetail {
   padding-top: 46px;
-  height: 100vh;
+  margin-bottom: 50px;
+  min-height: 100vh;
   background-color: #f7f7f7;
 
   img {
@@ -126,10 +186,12 @@ export default {
     margin-top: 18px;
     background: #fff;
     padding: 18px 22px;
-    .P{
-        margin-top: 10px;
-        font-size: 20px;
-      }
+
+    .P {
+      margin-top: 10px;
+      font-size: 20px;
+    }
+
     .title {
       display: flex;
       justify-content: space-between;
@@ -141,7 +203,8 @@ export default {
           margin-right: 11px;
           font-size: 25px;
         }
-        .oldprice{
+
+        .oldprice {
           font-size: 19px;
           text-decoration: line-through;
           color: #959595;
@@ -149,70 +212,84 @@ export default {
           margin-bottom: -4px;
         }
       }
-      .sellcount{
+
+      .sellcount {
         font-size: 17px;
         color: #959595;
       }
 
     }
   }
-  .service{
+
+  .service {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 18px 22px;
     color: #999;
     font-size: 16px;
+
     .left-words {
       margin-bottom: 2px;
+
       span {
         margin-right: 10px;
       }
+
       .van-icon {
         margin-right: 4px;
         color: #fa2209;
       }
     }
   }
-  .comment{
+
+  .comment {
     padding: 18px 22px;
     background-color: #fff;
-    .comment-title{
+
+    .comment-title {
       display: flex;
       justify-content: space-between;
       font-size: 16px;
       text-align: center;
     }
-    .comment-item{
+
+    .comment-item {
       font-size: 16px;
       line-height: 30px;
-      .top{
+
+      .top {
         height: 30px;
         display: flex;
         align-items: center;
         text-align: center;
         margin-top: 20px;
-        img{
+
+        img {
           width: 20px;
           height: 20px;
         }
+
         .name {
-        margin: 0 10px;
+          margin: 0 10px;
         }
       }
+
       .time {
-      color: #999;
-    }
+        color: #999;
+      }
     }
   }
-  .tips{
+
+  .tips {
     padding: 18px 22px;
     margin-top: 12px;
     background-color: #fff;
   }
-  .footer{
+
+  .footer {
     position: fixed;
-    bottom: 0;
+    bottom: -3px;
     left: 0;
     height: 55px;
     background: white;
@@ -221,17 +298,34 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    .icon-home, .icon-cart {
+
+    .icon-home,
+    .icon-cart {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       font-size: 14px;
+      position: relative;
+
       .van-icon {
         font-size: 24px;
       }
+      .num{
+        position: absolute;
+         top: 0px;
+         left: 20px;
+    min-width: 10px;
+    padding: 0 2px;
+    color: #fff;
+    text-align: center;
+    background-color: #ee0a24;
+    border-radius: 50%;
+      }
     }
-    .btn-add, .btn-buy {
+
+    .btn-add,
+    .btn-buy {
       height: 36px;
       line-height: 36px;
       border-radius: 18px;
@@ -241,8 +335,67 @@ export default {
       color: #fff;
       font-size: 14px;
     }
+
     .btn-buy {
       background-color: #fe5630;
+    }
+  }
+
+  .product {
+    padding: 0 20px;
+
+    .product-title {
+      display: flex;
+
+      img {
+        width: 120px;
+        height: 120px;
+      }
+
+      .right {
+        flex: 1;
+        padding: 0 26px 7px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        font-weight: 500;
+
+        .price {
+          margin-bottom: 5px;
+          color: #fe560a;
+
+          .nowprice {
+            color: #fe560a;
+            font-size: 30px;
+          }
+        }
+      }
+    }
+
+    .num-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .btn,
+    .btn-none {
+      color: rgb(255, 255, 255);
+      background-color: rgb(255, 148, 2);
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border-radius: 20px;
+      margin: 20px;
+    }
+
+    .btn.now {
+      background-color: #fe5630;
+    }
+
+    .btn-none {
+      background-color: #cccccc;
     }
   }
 }
