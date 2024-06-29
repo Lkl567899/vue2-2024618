@@ -17,3 +17,9 @@ export const GetCartListAPI = () => {
 export const PostCartUpdateAPI = (goodsNum, goodsId, goodsSkuId) => {
   return request.post('/cart/update', { goodsNum, goodsId, goodsSkuId })
 }
+// 删除购物车中的商品
+export const PostCartClearAPI = (cartIds) => {
+  return request.post('/cart/clear', {
+    cartIds
+  })
+}

@@ -1,4 +1,4 @@
-import { GetCartListAPI, PostCartUpdateAPI } from '@/api/cart'
+import { GetCartListAPI, PostCartUpdateAPI, PostCartClearAPI } from '@/api/cart'
 export default {
   namespaced: true,
   state () {
@@ -42,6 +42,13 @@ export default {
       const { value, goodsId, skuId } = data
       context.commit('setCount', { value, goodsId })
       await PostCartUpdateAPI(value, goodsId, skuId)
+    },
+    // 删除购物车中的商品
+    async ClearCartItem (context) {
+      console.log(context.getters.selCartItem)
+      const arr = context.getters.selCartItem.map(item => item.id)
+      await PostCartClearAPI(arr)
+      context.dispatch('GetCartListData')
     }
   },
   getters: {

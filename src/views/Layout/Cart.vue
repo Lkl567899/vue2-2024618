@@ -33,7 +33,7 @@
           <span>¥ <i class="totalPrice">{{selPrice}}</i></span>
         </div>
         <div v-if="isEdit" class="goPay" :class="{disabled: selCount === 0 }">结算({{selCount}})</div>
-        <div v-else class="delete">删除</div>
+        <div v-else class="delete" @click="ClearCartItem">删除</div>
       </div>
     </div>
   </div>
@@ -83,6 +83,10 @@ export default {
     // 修改商品数量
     changeCount (value, goodsId, skuId) {
       this.$store.dispatch('cart/setChangeCount', { value, goodsId, skuId })
+    },
+    // 删除购物车中的商品
+    ClearCartItem () {
+      this.$store.dispatch('cart/ClearCartItem')
     }
   },
   components: { countBox }
@@ -111,7 +115,7 @@ export default {
     margin-bottom: 17px;
 
     .pr15 {
-      padding-right: 15px;
+      padding-right: 7vw;
     }
 
     .show {
