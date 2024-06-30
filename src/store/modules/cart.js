@@ -45,7 +45,6 @@ export default {
     },
     // 删除购物车中的商品
     async ClearCartItem (context) {
-      console.log(context.getters.selCartItem)
       const arr = context.getters.selCartItem.map(item => item.id)
       await PostCartClearAPI(arr)
       context.dispatch('GetCartListData')

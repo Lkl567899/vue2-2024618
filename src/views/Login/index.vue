@@ -93,10 +93,11 @@ export default {
         this.$toast('请输入正确的手机验证码')
         return
       }
+      const Url = this.$route.query.backUrl || '/'
       const res = await PostpassportloginAPI(this.mobile, this.phonecode)
       this.$toast('登录成功')
       this.$store.commit('user/setUserinfo', res.data)
-      this.$router.push('/')
+      this.$router.replace(Url)
     }
   }
 

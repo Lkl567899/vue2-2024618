@@ -30,7 +30,8 @@ instance.interceptors.request.use(function (config) {
 instance.interceptors.response.use(function (response) {
   const res = response.data
   if (res.status !== 200) {
-    Toast(res.data)
+    // Toast(res.data)
+    Toast.clear()
     return Promise.reject(res.message)
   } else {
     // 清除 loading 中的效果

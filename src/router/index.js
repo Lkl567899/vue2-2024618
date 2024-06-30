@@ -49,6 +49,14 @@ const routes = [
   {
     path: '/searchlist',
     component: () => import('@/views/Search/list.vue')
+  },
+  {
+    path: '/list',
+    component: () => import('@/views/Address/list.vue')
+  },
+  {
+    path: '/addressUpdate',
+    component: () => import('@/views/Address/Addressupdate.vue')
   }
 
 ]

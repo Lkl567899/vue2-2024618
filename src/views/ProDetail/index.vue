@@ -105,11 +105,16 @@
 import { GetGoodsDetailAPI } from '@/api/prodetail'
 import { PostCartAddAPI, GetCartTotalAPI } from '@/api/cart'
 import countBox from '@/components/countBox.vue'
+import Form from '@/mixins/Form'
 export default {
   name: 'prodetailIndex',
+  mixins: [Form],
   computed: {
     goodsId () {
       return this.$route.params.id
+    },
+    isToken () {
+      return this.$store.getters.token
     }
   },
   components: { countBox },
@@ -145,13 +150,19 @@ export default {
       this.mode = key
       this.show = true
     },
+    // 加入购物车
     async addCart () {
+      if (this.isdialogFrom()) {
+        return false
+      }
       const res = await PostCartAddAPI(this.goodsId, this.count, this.data.skuList[0].goods_sku_id)
       this.cartTotal = res.data.cartTotal
       this.show = false
     },
+    // 立刻购买
     buy () {
     },
+    // 获取购物车商品数量
     async GetCartTotalData () {
       const res = await GetCartTotalAPI()
       this.cartTotal = res.data.cartTotal
@@ -311,16 +322,17 @@ export default {
       .van-icon {
         font-size: 24px;
       }
-      .num{
+
+      .num {
         position: absolute;
-         top: 0px;
-         left: 20px;
-    min-width: 10px;
-    padding: 0 2px;
-    color: #fff;
-    text-align: center;
-    background-color: #ee0a24;
-    border-radius: 50%;
+        top: 0px;
+        left: 20px;
+        min-width: 10px;
+        padding: 0 2px;
+        color: #fff;
+        text-align: center;
+        background-color: #ee0a24;
+        border-radius: 50%;
       }
     }
 
