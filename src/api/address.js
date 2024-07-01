@@ -11,3 +11,7 @@ export const GetAddressDefaultIdAPI = () => {
 export const PostAddressSetDefaultAPI = (addressId) => {
   return request.post('/address/setDefault', { addressId })
 }
+// 获取省市区-添加地址
+export const GetRegionTreeAPI = () => {
+  return request.get('/region/tree')
+}

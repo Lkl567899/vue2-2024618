@@ -1,4 +1,4 @@
-import { Button, Icon, Tabbar, TabbarItem, NavBar, Toast, Search, Swipe, SwipeItem, Grid, GridItem, Rate, ActionSheet, Checkbox, Dialog, RadioGroup, Radio } from 'vant'
+import { Button, Icon, Tabbar, TabbarItem, NavBar, Toast, Search, Swipe, SwipeItem, Grid, GridItem, Rate, ActionSheet, Checkbox, Dialog, RadioGroup, Radio, Form, Field, Cascader, Popup } from 'vant'
 import Vue from 'vue'
 Vue.use(Button)
 Vue.use(Icon)
@@ -17,3 +17,7 @@ Vue.use(Checkbox)
 Vue.use(Dialog)
 Vue.use(RadioGroup)
 Vue.use(Radio)
+Vue.use(Form)
+Vue.use(Field)
+Vue.use(Cascader)
+Vue.use(Popup)
