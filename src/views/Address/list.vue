@@ -15,8 +15,8 @@
           </van-radio-group>
         </div>
         <div class="right">
-          <span class="edit">编辑</span>
-          <span>删除</span>
+          <span class="edit" @click="$router.push(`/addressUpdate?addressId=${item.address_id}`)">编辑</span>
+          <span @click="removeOnsubmit(item.address_id)">删除</span>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { GetAddressListAPI, GetAddressDefaultIdAPI, PostAddressSetDefaultAPI } from '@/api/address'
+import { GetAddressListAPI, GetAddressDefaultIdAPI, PostAddressSetDefaultAPI, PostAddressRemoveAPI } from '@/api/address'
 export default {
   name: 'ListIndex',
   data () {
@@ -64,6 +64,11 @@ export default {
         }
       })
       this.list.unshift(obj)
+    },
+    // 删除地址
+    async removeOnsubmit (id) {
+      await PostAddressRemoveAPI(id)
+      this.GetAddressListData()
     }
   },
   created () {
@@ -75,7 +80,8 @@ export default {
 <style lang="less" scoped>
 .AddressList {
   padding-top: 46px;
-  height: 100vh;
+  min-height: 120vh;
+  padding-bottom: 120px;
   background-color: #f7f7f7;
   .addressItem{
     margin: 15px 10px;

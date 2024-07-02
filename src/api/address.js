@@ -15,3 +15,30 @@ export const PostAddressSetDefaultAPI = (addressId) => {
 export const GetRegionTreeAPI = () => {
   return request.get('/region/tree')
 }
+// 添加收货地址
+export const PostAddressAddAPI = (form) => {
+  return request.post('/address/add', {
+    form
+  })
+}
+// 获取单个收货地址详情
+export const GetAddressDetailAPI = (addressId) => {
+  return request.get('/address/detail', {
+    params: {
+      addressId
+    }
+  })
+}
+// 编辑收货地址
+export const PostAddressEditAPI = (addressId, form) => {
+  return request.post('/address/edit', {
+    addressId,
+    form
+  })
+}
+// 删除收货地址
+export const PostAddressRemoveAPI = (addressId) => {
+  return request.post('/address/remove', {
+    addressId
+  })
+}
