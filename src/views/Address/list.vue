@@ -36,6 +36,11 @@ export default {
       radio: 0
     }
   },
+  computed: {
+    backUrl () {
+      return this.$route.query.back
+    }
+  },
   methods: {
     // 获取收货地址列表
     async GetAddressListData () {
@@ -48,6 +53,11 @@ export default {
     },
     // 获取单选框的数据 设置默认地址
     async setRaio (id) {
+      if (this.backUrl) {
+        await PostAddressSetDefaultAPI(id)
+        this.$router.replace(this.backUrl)
+        return false
+      }
       await PostAddressSetDefaultAPI(id)
       this.GetAddressListData()
     },

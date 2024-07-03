@@ -6,7 +6,7 @@
       <van-swipe-item v-for="item in swiperList" :key="item.imgUrl"><img :src="item.imgUrl" alt=""></van-swipe-item>
     </van-swipe>
     <van-grid column-num="5">
-      <van-grid-item v-for="item in navList" :key="item.imgUrl" :icon="item.imgUrl" :text="item.text" />
+      <van-grid-item v-for="item in navList" :key="item.imgUrl" :icon="item.imgUrl" :text="item.text" @click="$router.push('/category')" />
     </van-grid>
     <div class="main">
       <img src="@/assets/leina.avif" alt="">

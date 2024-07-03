@@ -161,6 +161,18 @@ export default {
     },
     // 立刻购买
     buy () {
+      if (this.isdialogFrom()) {
+        return false
+      }
+      this.$router.push({
+        path: '/pay',
+        query: {
+          mode: 'buyNow',
+          goodsId: this.goodsId,
+          goodsSkuId: this.data.skuList[0].goods_sku_id,
+          goodsNum: this.count
+        }
+      })
     },
     // 获取购物车商品数量
     async GetCartTotalData () {

@@ -1,7 +1,8 @@
 <template>
   <div class="cart">
     <van-nav-bar title="购物车" fixed />
-    <div class="cartTiele">
+<div class="show" v-if="cartTotal>0">
+  <div class="cartTiele">
       <span class="all">共<i>{{cartTotal}}</i>件商品</span>
       <span class="edit" @click="isEdit = !isEdit">
         <van-icon name="edit" />
@@ -32,10 +33,15 @@
           <span>合计:</span>
           <span>¥ <i class="totalPrice">{{selPrice}}</i></span>
         </div>
-        <div v-if="isEdit" class="goPay" :class="{disabled: selCount === 0 }">结算({{selCount}})</div>
+        <div v-if="isEdit" class="goPay" @click="goCart" :class="{disabled: selCount === 0 }">结算({{selCount}})</div>
         <div v-else class="delete" @click="ClearCartItem">删除</div>
       </div>
     </div>
+</div>
+<div v-else class="empty">
+  <van-empty description="您的购物车是空的快去逛逛吧" />
+  <div class="btn" @click="$router.push('/')">去逛逛</div>
+</div>
   </div>
 </template>
 
@@ -87,6 +93,18 @@ export default {
     // 删除购物车中的商品
     ClearCartItem () {
       this.$store.dispatch('cart/ClearCartItem')
+    },
+    goCart () {
+      if (this.selCartItem.length <= 0) {
+        return false
+      }
+      this.$router.push({
+        path: '/pay',
+        query: {
+          mode: 'cart',
+          cartIds: this.selCartItem.map(item => item.id).join(',')
+        }
+      })
     }
   },
   components: { countBox }
@@ -98,7 +116,19 @@ export default {
   min-height: 100vh;
   background-color: #f7f7f7;
   padding: 46px 10px 100px 10px;
-
+  // 空购物车
+  .empty{
+    .btn{
+      text-align: center;
+      border: 1px red solid;
+      padding: 10px 12px;
+      width: 112px;
+      margin: 0 auto;
+      color: white;
+      border-radius: 26px;
+    background: linear-gradient(90deg, #f9211c, #ff6335);
+    }
+  }
   .cartTiele {
     height: 40px;
     display: flex;
